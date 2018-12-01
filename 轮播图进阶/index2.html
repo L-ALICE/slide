@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				padding: 0;
+				margin: 0;
+			}
+			li{
+				list-style: none;
+			}
+			body{
+				background: #CCCCCC;
+			}
+			#box{
+				width: 400px;
+				margin: 50px auto;
+				height: 426px;
+				overflow: hidden;
+				border: 1px solid yellow;
+			}
+			#top{
+				position: relative;
+				height: 320px;
+				
+			}
+			#top li{
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			#left{
+				position: absolute;
+				width: 200px;
+				top: 0;
+				left: 0;
+				height: 320px;
+				z-index: 1000;
+			}
+			#right{
+				position: absolute;
+				width: 200px;
+				height: 320px;
+				top: 0;
+				right: 0;
+				z-index: 1000;
+			}
+			#btn_l{
+				position: absolute;
+				background: url(img/btn.gif) no-repeat;
+				height: 60px;
+				width: 60px;
+				left: 10px;
+				top: 130px;
+				z-index: 1001;
+				opacity: 0;
+				filter: alpha(opacity=0);
+			}
+			#btn_r{
+				position: absolute;
+				background: url(img/btn.gif) no-repeat 0 -60px;
+				height: 60px;
+				width: 60px;
+				right: 10px;
+				top: 130px;
+				z-index: 1001;
+				opacity: 0;
+				filter: alpha(opacity=0);
+			}
+			#bottom{
+				position: relative;
+				
+			}
+			#small_ul{
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			#small_ul li{
+				float: left;
+			}
+			#small_ul img{
+				height: 90px;
+				width: 120px;
+				padding: 6px;
+			}
+		</style>
+		<script src="sport.js"></script>
+		<script type="text/javascript">
+
+		</script>
+	</head>
+	<body>
+		<div id="box">
+			<ul id="top">
+				<div id="left"></div>
+				<div id="right"></div>
+				<a href="javascript:;" id="btn_l"></a>
+				<a href="javascript:;" id="btn_r"></a>
+				<li style="z-index: 1 ";><img src="img/1.jpg" /></li>
+				<li><img src="img/2.jpg"/></li>
+				<li><img src="img/3.jpg"/></li>
+				<li><img src="img/4.jpg"/></li>
+				<li><img src="img/5.jpg"/></li>
+				<li><img src="img/6.jpg"/></li>
+			</ul>
+			<div id="bottom">
+				<ul id="small_ul">
+					<li><img src="img/1.jpg"/></li>
+					<li><img src="img/2.jpg"/></li>
+					<li><img src="img/3.jpg"/></li>
+					<li><img src="img/4.jpg"/></li>
+					<li><img src="img/5.jpg"/></li>
+					<li><img src="img/6.jpg"/></li>
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>
+<script src="public.js"></script>
+<script src="sport.js"></script>
+<script>
+	/*
+	 实现思路
+	 1、页面加载  大图自动切换      当中间的小图高亮显示时，小图开始自动轮播
+	 	显示的大图和下面高亮显示的小图有对应
+	 2、 鼠标移入移出到大box上,启动和停止定时器
+	 3、鼠标点击 左侧/右侧  按钮  大图自动切换   小图自动轮播    循环播放
+	 4、鼠标移入  移出   点击到小图上  
+	 	移入 ： 当前小图高亮
+	 	移出：  当前小图恢复高亮（但是注意如果是定时器控制的高亮小图 不恢复，仍然保持高亮状态）
+	 	点击 ： 大图 小图  自动轮播
+	 */
+	window.onload = function(){
+		//找到要操作的元素
+		var box = $id("box"),//大容器
+			leftDiv = $id("left"),//左遮罩
+			rightDiv = $id("right"),//右遮罩
+			leftBtn = $id("btn_l"),//左侧箭头
+			rightBtn = $id("btn_r"),//右侧箭头
+			bigImg = $id("top").getElementsByTagName("li"),//大图
+			oUl = $id("small_ul"),//小图运动的ul
+			smallImg = oUl.children,//小图
+			index = 0,//小图和大图对应
+			timer = null;//控制自动轮播的定时器
+		//定义一个函数 控制大图和小图的自动轮播
+		//大图 ： 隐藏所有图片  显示index对应的大图
+		//小图 ： 控制整体小图ul的left值  控制index对应的小图的透明度改变(排他)
+		autoPlay();
+		function autoPlay(){
+			//隐藏所有的大图  和 设置所有小图的透明度为 50
+			for( var i = 0 ; i < bigImg.length ; i++ ){
+				bigImg[i].style.display = "none";
+				sport( smallImg[i] , {opacity:50} );
+			}
+			if( index == bigImg.length ){
+				index = 0;
+			}
+			//设置index对应的大图显示
+			bigImg[index].style.display = "block";
+			//设置index对应的小图透明度为100
+			sport( smallImg[index] , {opacity:100} );
+			//设置小图ul的left值
+			if( index == 0 ){
+				//left : 0
+				sport( oUl , {left:0} );
+			}else if( index == smallImg.length-1 ){
+				sport( oUl , {left: -3*smallImg[0].offsetWidth } );
+			}else{
+				sport( oUl , {left: -(index-1)*smallImg[0].offsetWidth } );
+			}
+		}
+		//页面加载后 设置所有小图所在的ul的宽度
+		oUl.style.width = smallImg[0].offsetWidth*smallImg.length +"px";
+		//启动定时器 控制大图和小图的自动轮播
+		timer = setInterval( function(){
+			index++;
+			autoPlay();
+		},2000 )
+		
+		//鼠标移入和移出大容器时，停止和启动定时器
+		box.onmouseenter = function(){
+			clearInterval(timer);
+		}
+		box.onmouseleave = function(){
+			//启动定时器 控制大图和小图的自动轮播
+			timer = setInterval( function(){
+				index++;
+				autoPlay();
+			},2000 )
+		}
+		//鼠标操作小图
+		//移入：当前的小图高亮
+		//离开 ： 当前的小图恢复 透明度50
+		//点击 ： 当前的小图高亮 控制自动轮播
+		for( let i = 0 ; i < smallImg.length ; i++ ){
+			smallImg[i].onmouseenter = function(){
+				sport( this , {opacity:100} );
+			}
+			smallImg[i].onmouseleave = function(){
+				if( index != i ){//如果当前操作的小图是高亮显示的  不恢复
+					sport( this , {opacity:50} );
+				}
+			}
+			smallImg[i].onclick = function(){
+				//点击时 获取当前操作的小图下标
+				index = i;
+				autoPlay();
+			}
+		}
+		
+		//鼠标移入移出左遮罩和左箭头时  显示和隐藏左侧箭头
+		leftDiv.onmouseenter = leftBtn.onmouseenter =  function(){
+			sport( leftBtn , {opacity:100} )
+		}
+		leftDiv.onmouseleave = leftBtn.onmouseleave = function(){
+			sport( leftBtn , {opacity:0} )
+		}
+		//鼠标移入移出右遮罩和右箭头时  显示和隐藏右侧箭头
+		rightDiv.onmouseenter = rightBtn.onmouseenter =  function(){
+			sport( rightBtn , {opacity:100} );
+		}
+		rightDiv.onmouseleave = rightBtn.onmouseleave =  function(){
+			sport( rightBtn , {opacity:0} );
+		}
+		//点击箭头 操作轮播
+		//点击右侧箭头  index++
+		rightBtn.onclick = function(){
+			index++;
+			autoPlay();
+		}
+		//点击左侧箭头 index--
+		leftBtn.onclick = function(){
+			index--;
+			if( index == -1 ){
+				index = smallImg.length - 1;
+			}
+			autoPlay();
+		}
+	}
+</script>

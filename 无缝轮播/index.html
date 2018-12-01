@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<style>
+	*{
+		padding: 0;
+		margin: 0;
+	}
+	.banner{
+		position: relative;
+		width: 810px;
+		height: 320px;
+		margin: 50px auto;
+		background: grey;
+		overflow: hidden;
+	}
+	.img-list{
+		list-style:none;
+		position: absolute;
+		left:0; top:0;
+		width: 5240px;
+		height: 320px;
+	}
+	.img-list li{
+		float: left;
+	}
+	.banner-nav-list{
+		list-style:none;
+		position: absolute;
+		right:100px; bottom:50px;
+		
+	}
+	.banner-nav-list li {
+		background: red;
+		float: left;
+		width: 20px; height: 20px;
+		margin-right: 10px;
+		cursor: pointer;
+		text-align: center;
+	}
+	
+	.banner-nav-list li.active{
+		background: yellow;
+	}
+	.banner .toLeft {
+		width: 60px;
+		height: 60px;
+		background: url(images/btn.gif);
+		position: absolute;
+		left: 30px; top: 120px;
+		/*opacity: 0;*/
+	}
+	.banner .toRight {
+		width: 60px;
+		height: 60px;
+		background: url(images/btn.gif) 0px 60px;
+		position: absolute;
+		right: 30px; top: 120px;
+		/*opacity: 0;*/
+	}
+	#arr{
+		opacity: 0;
+	}
+</style>
+
+<script  src="sport5.js"></script>
+<script type="text/javascript">
+	 
+	
+</script>
+</head>
+
+<body>
+	<div class="banner" id="banner">
+		<ul class="img-list" id="img-list">
+			<li><img src="images/001.jpg"></li>
+			<li><img src="images/002.jpg"></li>
+			<li><img src="images/003.jpg"></li>
+			<li><img src="images/004.jpg"></li>
+			<li><img src="images/001.jpg"></li>
+		</ul>
+		
+		<ul class="banner-nav-list" id="banner-nav-list">
+			<li class="active">1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+		</ul>
+		
+	</div>
+</body>
+</html>
+<script src="public.js"></script>
+<script src="../sport5.js"></script>
+<script type="text/javascript">
+	
+	/*
+	  1 、 定时器自动实现无缝轮播
+	   
+	  2、鼠标操作数字  找到对应的图片
+	 */
+ 	var index = 0;//控制图片和文字的对应关系
+ 	var timer = null;
+ 	var oUl = document.getElementById("img-list");
+ 	var olist = document.getElementById("banner-nav-list").children;
+ 	timer = setInterval( autoPlay , 2000 );
+ 	function autoPlay(){
+ 		index++;
+ 		if( index == 5 ){ //当index值为5时  将oUl的left值清0
+ 			index = 1;
+ 			oUl.style.left = 0;
+ 		}
+ 		//排他思想  清空样式
+ 		for ( var i = 0 ; i < olist.length ; i++ ) {
+ 			olist[i].className = "";
+ 		}
+ 		//当第五张图片进入时 此时index值为4 
+ 		//第五张图片实际上就是第一张图片，此时应该1是高亮的
+ 		olist[index==4?0:index].className = "active";
+ 		startMove( oUl , { left : -index*oUl.children[0].offsetWidth } );
+ 	}
+ 	//鼠标移入和移出文字 
+	for( let i = 0 ; i <olist.length ; i++ ){
+		olist[i].onmouseenter = function(){
+			clearInterval( timer );
+			index = i-1;
+			autoPlay();
+		}
+		olist[i].onmouseleave = function(){
+			timer = setInterval( autoPlay , 2000 );
+		}
+	}
+</script>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>旋转木马轮播图</title>
+    <link rel="stylesheet" href="css/css.css"/>
+</head>
+<body>
+<div class="wrap" id="wrap">
+   <div class="slide" id="slide">
+       <ul>
+           <li><a href="#"><img src="images/slidepic1.jpg" alt=""/></a></li>
+           <li><a href="#"><img src="images/slidepic2.jpg" alt=""/></a></li>
+           <li><a href="#"><img src="images/slidepic3.jpg" alt=""/></a></li>
+           <li><a href="#"><img src="images/slidepic4.jpg" alt=""/></a></li>
+           <li><a href="#"><img src="images/slidepic5.jpg" alt=""/></a></li>
+       </ul>
+       <div class="arrow" id="arrow">
+           <a href="javascript:;" class="prev" id="prev"></a>
+           <a href="javascript:void(0);" class="next" id="next"></a>
+       </div>
+   </div>
+</div>
+</body>
+</html>
+<script src="sport6.js"></script>
+<script>
+   var json = [
+   		{   //1
+            "width":400,
+            "top":20,
+            "left":750,
+            "opacity":20,
+            "zIndex":2
+        }
+        ,
+        {  // 2
+            "width":600,
+            "top":70,
+            "left":600,
+            "opacity":80,
+            "zIndex":3
+        },
+        {   // 3
+            "width":800,
+            "top":100,
+            "left":200,
+            "opacity":100,
+            "zIndex":4
+        },
+        {  // 4
+            "width":600,
+            "top":70,
+            "left":0,
+            "opacity":80,
+            "zIndex":3
+        },
+        {   // 5
+            "width":400,
+            "top":20,
+            "left":50,
+            "opacity":20,
+            "zIndex":2
+        }     
+	];
+	var list = document.getElementsByTagName("li");
+	var  flag = true;//假设值为true时  按钮点击生效   
+	//函数节流 ：使用一个变量 控制函数频繁执行
+	//第一步 ： 遍历数组  获取数组中的每一个对象的数据 将这些数据设置到图片上
+	showData();
+	function showData(){
+		for ( var i = 0 ; i < list.length ; i++ ) {
+			startMove( list[i] , json[i] , function(){
+				//上一个动作完成后 进入下一个动作
+				//将开关变量的值改变
+				flag = true;
+			});
+		}
+	}
+	//第二步 ： 鼠标滑入到大容器上 显示和隐藏箭头
+	slide.onmouseenter = function(){
+		startMove( arrow , { opacity : 100 } );
+	}
+	slide.onmouseleave = function(){
+		startMove( arrow , { opacity : 0 } );
+	}
+	//第三步 ： 按钮操作
+	//点击左侧按钮 ：
+	prev.onclick = function(){
+		if( flag ){
+			json.push( json.shift() ); 
+			showData(); 
+			flag = false;
+		}
+	}
+	//点击右侧按钮 :
+	next.onclick = function(){
+		json.unshift( json.pop() ); 
+		showData();
+	}
+</script>
